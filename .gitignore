@@ -7,3 +7,6 @@
 cmake-build-debug
 
 src/secrets.h
+
+# QtCreator user files
+*.user
