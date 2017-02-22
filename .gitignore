@@ -1,0 +1,7 @@
+.pioenvs
+.piolibdeps
+
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+
+cmake-build-debug
