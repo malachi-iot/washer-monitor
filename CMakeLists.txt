@@ -13,6 +13,6 @@ include_directories(${PIO_FRAMEWORK}/libraries/ESP8266WiFi/src)
 
 set(SOURCE_FILES
         lib/readme.txt
-        src/main.cpp src/secrets.h)
+        src/main.cpp src/secrets.h src/wiggleDetector.cpp)
 
 add_executable(washer_monitor ${SOURCE_FILES})
