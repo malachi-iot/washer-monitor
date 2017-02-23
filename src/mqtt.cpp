@@ -6,6 +6,8 @@ WiFiClient net;
 MQTTClient client;
 extern SimpleTimer timer;
 
+uint32_t getTotalWigglesInLast60Seconds();
+
 void mqtt_setup()
 {
     client.begin("192.168.2.11", net);
@@ -17,7 +19,7 @@ void mqtt_send_event()
     static uint32_t counter = 0;
     char buf[64];
 
-    sprintf(buf, "Hello World: %d", counter++);
+    sprintf(buf, "Wiggles [last 60s]: %lu", getTotalWigglesInLast60Seconds());
 
     if(client.connected())
     {

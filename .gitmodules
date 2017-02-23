@@ -1,0 +1,3 @@
+[submodule "lib/util.embedded"]
+	path = lib/util.embedded
+	url = git@github.com:malachib/util.embedded.git
