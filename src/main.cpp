@@ -10,6 +10,10 @@ void wiggleDetector();
 void printWifiStatus();
 void printWiggleStatus();
 
+
+void mqtt_setup();
+void mqtt_loop();
+
 extern volatile int wigglesDetected;
 
 SimpleTimer timer;
@@ -44,6 +48,8 @@ void setup()
 
     // every second, report wiggle status over serial line
     timer.setInterval(1000, printWiggleStatus);
+
+    mqtt_setup();
 }
 
 
@@ -72,4 +78,6 @@ void loop()
     digitalWrite(BUILTIN_LED, wigglesDetected > 0 ? LOW : HIGH); // ON / OFF
 
     timer.run();
+
+    mqtt_loop();
 }
