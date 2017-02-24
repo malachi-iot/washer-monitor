@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <SimpleTimer.h>
 
 #include "secrets.h"
+#include "main.h"
 
 void wiggleDetector();
 void printWifiStatus();
@@ -11,6 +11,8 @@ void printWiggleStatus();
 void ota_setup();
 void ota_loop();
 
+void button_setup();
+void button_loop();
 
 void mqtt_setup();
 void mqtt_loop();
@@ -49,6 +51,7 @@ void setup()
 
     mqtt_setup();
     ota_setup();
+    button_setup();
 }
 
 
@@ -74,4 +77,5 @@ void loop()
 
     mqtt_loop();
     ota_loop();
+    button_loop();
 }

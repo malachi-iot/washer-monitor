@@ -1,10 +1,10 @@
 #include <ESP8266WiFi.h>
 #include <MQTTClient.h>
-#include <SimpleTimer.h>
+
+#include "main.h"
 
 WiFiClient net;
 MQTTClient client;
-extern SimpleTimer timer;
 
 uint32_t getTotalWigglesInLast60Seconds();
 

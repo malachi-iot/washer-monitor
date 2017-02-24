@@ -6,6 +6,8 @@
 #include <fact/CircularBuffer.h>
 #include <SimpleTimer.h>
 
+#include "state.h"
+
 namespace util = FactUtilEmbedded;
 
 const int SENSOR_PIN = 13;
@@ -42,6 +44,8 @@ void wiggle_stop_event()
 {
     // get here when enough time has passed without wiggle threshold being exceeded
     mqtt_send_inactivity();
+
+    state_change(State::NotifyingTimeout);
 
     // specifically do not requeue stop event, instead let threshold manager do that
     wiggleTimeoutTimer = -1;
