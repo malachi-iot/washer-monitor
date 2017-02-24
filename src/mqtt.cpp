@@ -10,21 +10,22 @@ uint32_t getTotalWigglesInLast60Seconds();
 
 void mqtt_setup()
 {
+    // Wow, only QoS 0 supported.... weak!!
+    // At least there's a good reason for this:
+    // https://github.com/256dpi/arduino-mqtt/issues/49
     client.begin("192.168.2.11", net);
 }
 
 
-void mqtt_send_log()
+void mqtt_send_log(const char* msg)
 {
-
+    client.publish("marguerita/washer-monitor/log", msg);
 }
 
 
-void mqtt_send_inactivity()
+void mqtt_send_status(const char* status)
 {
-    char buf[64];
-    sprintf(buf, "DONE");
-    client.publish("/marguerita/washer-monitor/status", buf);
+    client.publish("marguerita/washer-monitor/status", status);
 }
 
 
@@ -37,7 +38,7 @@ void mqtt_send_event()
 
     if(client.connected())
     {
-        client.publish("/hello", buf);
+        client.publish("hello", buf);
 
         // reschedule our next call
         timer.setTimeout(5000, mqtt_send_event);

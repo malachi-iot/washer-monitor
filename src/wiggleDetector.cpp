@@ -38,12 +38,14 @@ uint32_t minutesCounter = 0;
 
 int wiggleTimeoutTimer = -1;
 extern SimpleTimer timer;
-void mqtt_send_inactivity();
+void mqtt_send_status(const char* status);
+
+#define WIGGLE_TIMEOUT 10
 
 void wiggle_stop_event()
 {
     // get here when enough time has passed without wiggle threshold being exceeded
-    mqtt_send_inactivity();
+    mqtt_send_status("DONE");
 
     state_change(State::NotifyingTimeout);
 
@@ -51,9 +53,9 @@ void wiggle_stop_event()
     wiggleTimeoutTimer = -1;
 }
 
-void wiggle_setup()
+void wiggle_set_detector_timeout()
 {
-    wiggleTimeoutTimer = timer.setTimeout(5 * 60 * 1000, wiggle_stop_event);
+    wiggleTimeoutTimer = timer.setTimeout(WIGGLE_TIMEOUT * 1000, wiggle_stop_event);
 }
 
 uint32_t getTotalWigglesInLast60Seconds();
