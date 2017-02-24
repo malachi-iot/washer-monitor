@@ -18,11 +18,19 @@ void state_change(State s)
             break;
 
         case State::ButtonPressing:
+            if(state == State::Detecting || state == State::DetectedWiggle)
+            {
+                // button was pressed in the middle of a cycle
+            }
             break;
 
         case State::ButtonPressed:
+            //s = State::Detecting;
+            //statusLed_changeState(s);
             break;
     }
+
+    state = s;
 
     Serial.println("State changed");
 }

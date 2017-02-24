@@ -22,12 +22,15 @@ void button_loop()
     debouncer.update();
     int value = debouncer.read();
 
+    //delay(500);
+    //Serial.printf("Debouncer value = %d\r\n", value);
+
     if(state == State::ButtonPressing)
     {
-        if(value == LOW)
+        if(value == HIGH)
             state_change(State::ButtonPressed);
     }
-    else if(value == HIGH)
+    else if(value == LOW)
     {
         state_change(State::ButtonPressing);
     }

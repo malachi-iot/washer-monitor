@@ -4,9 +4,10 @@
 #include "secrets.h"
 #include "main.h"
 
-void wiggleDetector();
 void printWifiStatus();
 void printWiggleStatus();
+
+void wiggleDetector_setup();
 
 void ota_setup();
 void ota_loop();
@@ -55,6 +56,7 @@ void setup()
     // every second, report wiggle status over serial line
     timer.setInterval(1000, printWiggleStatus);
 
+    wiggleDetector_setup();
     mqtt_setup();
     ota_setup();
     button_setup();

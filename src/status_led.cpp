@@ -1,7 +1,8 @@
 #include "main.h"
 #include "state.h"
 
-const int LED_PIN = BUILTIN_LED;
+//const int LED_PIN = BUILTIN_LED;
+const int LED_PIN = 2;
 
 void statusLed_setup()
 {
@@ -14,6 +15,8 @@ bool ledOn = false;
 inline void statusLed(bool on)
 {
     digitalWrite(LED_PIN, on ? LOW : HIGH);
+    Serial.print("Changing led: ");
+    Serial.println(on ? "ON" : "OFF");
 }
 
 
@@ -26,6 +29,8 @@ inline void toggleLed()
 void statusLed_blink_event()
 {
     uint32_t timeout = 0;
+
+    Serial.println("Blink event");
 
     toggleLed();
 
