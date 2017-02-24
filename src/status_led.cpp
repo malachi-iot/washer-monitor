@@ -30,7 +30,7 @@ void statusLed_blink_event()
 {
     uint32_t timeout = 0;
 
-    Serial.println("Blink event");
+    Serial.println("Blink event: " + state);
 
     toggleLed();
 
@@ -58,7 +58,12 @@ void statusLed_blink_event()
 static void clear_event()
 {
     if(ledNotifyTimer != -1)
+    {
+        Serial.print("Removing timer: ");
+        Serial.println(ledNotifyTimer);
+
         timer.deleteTimer(ledNotifyTimer);
+    }
 }
 
 // statusLed responder to system state change
