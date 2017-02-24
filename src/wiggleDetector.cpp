@@ -4,6 +4,7 @@
 
 #include <Arduino.h>
 #include <fact/CircularBuffer.h>
+#include <SimpleTimer.h>
 
 namespace util = FactUtilEmbedded;
 
@@ -26,7 +27,26 @@ void wiggleDetector()
 //__attribute__((section(".iram0.text"))) uint8_t minutesCounter = 0;
 uint32_t minutesCounter = 0;
 
+int wiggleTimeoutTimer = -1;
+extern SimpleTimer timer;
+void mqtt_send_inactivity();
+
+void wiggle_stop_event()
+{
+    // get here when enough time has passed without wiggle threshold being exceeded
+    mqtt_send_inactivity();
+
+    // specifically do not requeue stop event, instead let threshold manager do that
+    wiggleTimeoutTimer = -1;
+}
+
+void wiggle_setup()
+{
+    wiggleTimeoutTimer = timer.setTimeout(5 * 60 * 1000, wiggle_stop_event);
+}
+
 uint32_t getTotalWigglesInLast60Seconds();
+uint32_t getTotalWigglesInLast5Minutes();
 
 void printWiggleStatus()
 {
@@ -34,6 +54,12 @@ void printWiggleStatus()
 
     if(wd > 0)
     {
+        // we must get more than a "little" bit of wiggling to think that stuff is shaking
+        // will need fine tuning
+        // also wiggleTimeoutTimer == -1 means we are not initialized/listening for a timeout
+        if(wd > 300 && wiggleTimeoutTimer != -1)
+            timer.restartTimer(wiggleTimeoutTimer);
+
         wigglesDetected = 0;
     }
 
@@ -58,17 +84,22 @@ void printWiggleStatus()
     }
 }
 
-
-uint32_t getTotalWigglesInLast60Seconds()
+template <class TArray>
+uint32_t array_sum(const TArray& array, uint16_t size)
 {
     uint32_t total = 0;
 
-    auto array = wigglesPerSecond.getUnderlyingArray();
-
-    for(int i = 0; i < 60; i++)
+    for(int i = 0; i < size; i++)
     {
         total += array[i];
     }
 
     return total;
+}
+
+uint32_t getTotalWigglesInLast60Seconds()
+{
+    auto array = wigglesPerSecond.getUnderlyingArray();
+
+    return array_sum(array, 60);
 }

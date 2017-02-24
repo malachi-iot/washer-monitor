@@ -14,6 +14,20 @@ void mqtt_setup()
 }
 
 
+void mqtt_send_log()
+{
+
+}
+
+
+void mqtt_send_inactivity()
+{
+    char buf[64];
+    sprintf(buf, "DONE");
+    client.publish("/marguerita/washer-monitor/status", buf);
+}
+
+
 void mqtt_send_event()
 {
     static uint32_t counter = 0;

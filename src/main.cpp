@@ -2,6 +2,9 @@
 #include <ESP8266WiFi.h>
 #include <SimpleTimer.h>
 
+#include <WiFiUdp.h>
+//#include <ArduinoOTA.h>
+
 #include "secrets.h"
 
 const int SENSOR_PIN = 13;
