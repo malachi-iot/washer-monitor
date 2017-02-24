@@ -28,6 +28,11 @@ void state_change(State s)
             mqtt_send_status("DONE");
             break;
 
+        case State::Detected:
+            // revert right back again, we don't want to restart detecting process
+            s = State::Detecting;
+            break;
+
         case State::Detecting:
             mqtt_send_log("Detection mode begins");
             wiggle_set_detector_timeout();

@@ -67,7 +67,10 @@ void printWiggleStatus()
         // will need fine tuning
         // also wiggleTimeoutTimer == -1 means we are not initialized/listening for a timeout
         if(wd > 150 && wiggleTimeoutTimer != -1)
+        {
+            state_change(State::Detected);
             timer.restartTimer(wiggleTimeoutTimer);
+        }
 
         wigglesDetected = 0;
     }

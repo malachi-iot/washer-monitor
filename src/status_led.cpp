@@ -60,6 +60,13 @@ void statusLed_blink_event()
             timeout = ledOn ? 50 : 10000;
             break;
 
+// Not well tested, and won't work well anyway because we spend almost no time in "Detected" state
+#ifdef DEBUG
+        case State::Detected:
+            timeout = 20;
+            break;
+#endif
+
         case State::Detecting:
             timeout = ledOn ? 5000 : 250;
             break;
