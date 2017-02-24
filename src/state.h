@@ -4,6 +4,8 @@
 enum State
 {
     Idle,
+    ButtonPressing,
+    ButtonPressed,
     Detecting,
     DetectedWiggle,
     NotifyingTimeout,

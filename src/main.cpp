@@ -17,6 +17,12 @@ void button_loop();
 void mqtt_setup();
 void mqtt_loop();
 
+void statusLed_setup();
+void statusLed_loop();
+
+void state_setup();
+void state_loop();
+
 extern volatile int wigglesDetected;
 
 SimpleTimer timer;
@@ -52,6 +58,8 @@ void setup()
     mqtt_setup();
     ota_setup();
     button_setup();
+    statusLed_setup();
+    state_setup();
 }
 
 
