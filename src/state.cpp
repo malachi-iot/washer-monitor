@@ -10,10 +10,10 @@ void mqtt_send_status(const char* status);
 
 void state_change(State s)
 {
-    State previousState = state;
-
-    Serial.print("State changing: ");
+#ifdef DEBUG
+    Serial.print("State changing from: ");
     Serial.println(s);
+#endif
 
     statusLed_changeState(s);
 
@@ -28,31 +28,6 @@ void state_change(State s)
             mqtt_send_status("DONE");
             break;
 
-        case State::ButtonPressing:
-            break;
-
-        case State::ButtonLongPressing:
-            state_change(State::NotifyingManual);
-            return;
-
-        case State::ButtonPressed:
-            /*
-            if(previousState == State::Detecting || previousState == State::DetectedWiggle)
-            {
-                // button was pressed in the middle of a cycle, which means abort
-                state_change(State::Idle);
-                return;
-            }
-            else if(previousState == State::NotifyingTimeout || previousState == State::NotifyingManual)
-            {
-                // button was pressed during alert mode, which means acknowledge
-                state_change(State::Idle);
-                return;
-            } */
-
-            state_change(State::Detecting);
-            return;
-
         case State::Detecting:
             mqtt_send_log("Detection mode begins");
             wiggle_set_detector_timeout();
@@ -64,13 +39,14 @@ void state_change(State s)
     // has access to up-to-date state
     state = s;
 
-    Serial.println("State changed");
+    Serial.print("State changed: ");
+    Serial.println(s);
 }
 
 
 void state_setup()
 {
-
+    state_change(State::Idle);
 }
 
 

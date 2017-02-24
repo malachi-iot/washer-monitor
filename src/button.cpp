@@ -3,11 +3,15 @@
 
 #include "main.h"
 #include "state.h"
+#include "button.h"
 
 const int BUTTON_PIN = 0;
 
 Bounce debouncer;
 
+Button::State buttonState;
+
+ButtonWithTimer button;
 
 void button_setup()
 {
@@ -17,25 +21,84 @@ void button_setup()
 }
 
 
-// ms we started button press, for long press detection
-// (timer class is neat but overkill for this one)
-uint32_t buttonPressStart;
+void Button::loop(bool pressed)
+{
+    if(isPressed())
+    {
+        if(state == PRESSED) state = PRESSING;
+
+        if(!pressed)
+        {
+            state = RELEASED;
+        }
+    }
+    else if(pressed)
+    {
+        state = PRESSED;
+    }
+    else // if not pressed, and state was not pressing, then this is a 2nd non-pressed
+        // event and resets back to Idle
+    {
+        state = IDLE;
+    }
+}
+
+void ButtonWithTimer::loop(bool pressed)
+{
+    Button::loop(pressed);
+    if(getState() == PRESSED)
+    {
+        buttonInitialPressTimestamp = millis();
+    }
+}
+
+void statusLed(bool on);
+
 
 void button_loop()
 {
     debouncer.update();
     int value = debouncer.read();
 
-    if(state == State::ButtonPressing || state == State::ButtonLongPressing)
+    button.loop(value == LOW);
+    switch(button.getState())
     {
-        if(value == HIGH) // button released if value == HIGH
-            state_change(State::ButtonPressed);
-        else if(state != State::ButtonLongPressing && millis() > buttonPressStart + 5000) // check for 5s timeout
-            state_change(State::ButtonLongPressing);
-    }
-    else if(value == LOW)
-    {
-        buttonPressStart = millis();
-        state_change(State::ButtonPressing);
+        case Button::PRESSED:
+            // since normal button release doesn't exit manual mode, we have to check here
+            // and clear manual notify state
+            if(state == State::NotifyingManual)
+                state_change(State::NotifiedManual);
+
+            statusLed(true);
+
+            break;
+
+        case Button::PRESSING:
+        {
+            if(state != State::NotifyingManual && button.elapsedSinceInitialPress() > 5000)
+                state_change(State::NotifyingManual);
+
+            break;
+        }
+
+        case Button::RELEASED:
+            // Notify manual mode is a special situation where button
+            // release doesn't do anything
+            if(state != State::NotifyingManual)
+            {
+                statusLed(false);
+
+                // If idle, then begin our normal detection cycle
+                if(state == State::Idle)
+                    state_change(State::Detecting);
+                // if NOT idle, then we are in the middle/end of something,
+                // such as Notify or Detect.  For these situations, go back to Idle
+                else
+                    state_change(State::Idle);
+            }
+            break;
+
+        case Button::IDLE:
+            break;
     }
 }

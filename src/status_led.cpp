@@ -1,5 +1,8 @@
 #include "main.h"
 #include "state.h"
+#include "button.h"
+
+extern ButtonWithTimer button;
 
 //const int LED_PIN = BUILTIN_LED;
 const int LED_PIN = 2;
@@ -12,7 +15,7 @@ void statusLed_setup()
 int ledNotifyTimer = -1;
 bool ledOn = false;
 
-inline void statusLed(bool on)
+void statusLed(bool on)
 {
     digitalWrite(LED_PIN, on ? LOW : HIGH);
 #ifdef DEBUG
@@ -27,16 +30,18 @@ inline void toggleLed()
     statusLed(ledOn = !ledOn);
 }
 
-// a bit of a kludge since SimpleTimer can't pass contexts around
-// UNUSED at this time
-struct
-{
-    State state;
-} statusLed_blink_event_context;
 
 void statusLed_blink_event()
 {
-    //State state = statusLed_blink_event_context.state;
+    // This logic ensures that a long button press won't get its LED feedback
+    // shut off - except for NotifyingManual which is a special case
+    // where we want blink to take over while button is still pressed
+    if(button.isPressed() && state != State::NotifyingManual)
+    {
+        // check a little later when button isn't pressed and leave LED alone
+        ledNotifyTimer = timer.setTimeout(500, statusLed_blink_event);
+        return;
+    }
 
     uint32_t timeout = 0;
 
@@ -62,7 +67,7 @@ void statusLed_blink_event()
             break;
 
         case State::NotifyingManual:
-            timeout = 500;
+            timeout = 250;
             break;
 
         default:
@@ -106,14 +111,6 @@ void statusLed_changeState(State s)
             // so that global state can get set (since we can't easily manage
             // context/global state with this event)
             timer.setTimeout(10, statusLed_blink_event);
-            break;
-
-        case State::ButtonPressing:
-            statusLed(true);
-            break;
-
-        case State::ButtonPressed:
-            statusLed(false);
             break;
 
         default:

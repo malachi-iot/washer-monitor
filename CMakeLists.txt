@@ -18,11 +18,13 @@ include_directories(lib/util.embedded/src)
 
 # platformio-style file discovery
 file(GLOB_RECURSE pio_sources src/*.cpp)
+file(GLOB_RECURSE pio_libs lib/*.cpp lib/*.h lib/*.hpp)
 
 set(SOURCE_FILES
         lib/readme.txt
         src/secrets.h
         ${pio_sources}
+        ${pio_libs}
         )
 
 add_executable(washer_monitor ${SOURCE_FILES})
