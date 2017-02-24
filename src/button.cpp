@@ -17,21 +17,25 @@ void button_setup()
 }
 
 
+// ms we started button press, for long press detection
+// (timer class is neat but overkill for this one)
+uint32_t buttonPressStart;
+
 void button_loop()
 {
     debouncer.update();
     int value = debouncer.read();
 
-    //delay(500);
-    //Serial.printf("Debouncer value = %d\r\n", value);
-
-    if(state == State::ButtonPressing)
+    if(state == State::ButtonPressing || state == State::ButtonLongPressing)
     {
-        if(value == HIGH)
+        if(value == HIGH) // button released if value == HIGH
             state_change(State::ButtonPressed);
+        else if(state != State::ButtonLongPressing && millis() > buttonPressStart + 5000) // check for 5s timeout
+            state_change(State::ButtonLongPressing);
     }
     else if(value == LOW)
     {
+        buttonPressStart = millis();
         state_change(State::ButtonPressing);
     }
 }

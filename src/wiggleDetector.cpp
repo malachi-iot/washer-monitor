@@ -44,9 +44,6 @@ void mqtt_send_status(const char* status);
 
 void wiggle_stop_event()
 {
-    // get here when enough time has passed without wiggle threshold being exceeded
-    mqtt_send_status("DONE");
-
     state_change(State::NotifyingTimeout);
 
     // specifically do not requeue stop event, instead let threshold manager do that

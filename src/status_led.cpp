@@ -102,7 +102,10 @@ void statusLed_changeState(State s)
         case State::NotifyingManual:
         case State::NotifyingTimeout:
             //statusLed_blink_event_context.state = s;
-            statusLed_blink_event();
+            // would do this as a direct call, but want some cycles to pass
+            // so that global state can get set (since we can't easily manage
+            // context/global state with this event)
+            timer.setTimeout(10, statusLed_blink_event);
             break;
 
         case State::ButtonPressing:

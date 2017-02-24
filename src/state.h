@@ -5,12 +5,14 @@ enum State
 {
     Idle,
     ButtonPressing,
+    ButtonLongPressing,
     ButtonPressed,
     Detecting,
     DetectedWiggle,
     NotifyingTimeout,
     NotifyingManual
 };
+
 
 extern State state;
 
