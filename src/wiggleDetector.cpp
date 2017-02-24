@@ -8,7 +8,7 @@
 
 namespace util = FactUtilEmbedded;
 
-extern const int SENSOR_PIN;
+const int SENSOR_PIN = 13;
 
 volatile uint16_t wigglesDetected = 0;
 
@@ -18,6 +18,13 @@ util::layer1::CircularBuffer<uint32_t, 60> wigglesPerMinute;
 void wiggleDetector()
 {
     wigglesDetected++;
+}
+
+void wiggleDetector_setup()
+{
+    pinMode(SENSOR_PIN, INPUT);
+
+    attachInterrupt(digitalPinToInterrupt(SENSOR_PIN), wiggleDetector, RISING);
 }
 
 

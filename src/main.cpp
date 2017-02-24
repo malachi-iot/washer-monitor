@@ -2,16 +2,14 @@
 #include <ESP8266WiFi.h>
 #include <SimpleTimer.h>
 
-#include <WiFiUdp.h>
-//#include <ArduinoOTA.h>
-
 #include "secrets.h"
-
-const int SENSOR_PIN = 13;
 
 void wiggleDetector();
 void printWifiStatus();
 void printWiggleStatus();
+
+void ota_setup();
+void ota_loop();
 
 
 void mqtt_setup();
@@ -30,9 +28,6 @@ void setup()
     WiFi.begin(ssid, pass);
 
     pinMode(BUILTIN_LED, OUTPUT);
-    pinMode(SENSOR_PIN, INPUT);
-
-    attachInterrupt(digitalPinToInterrupt(SENSOR_PIN), wiggleDetector, RISING);
 
     // Wait for connect to AP
     Serial.print("[Connecting]");
@@ -53,20 +48,15 @@ void setup()
     timer.setInterval(1000, printWiggleStatus);
 
     mqtt_setup();
+    ota_setup();
 }
 
 
 void printWifiStatus() {
-    static int dbgCounter = 0;
-
     // print the SSID of the network you're attached to:
     Serial.print("SSID: ");
-    Serial.print(dbgCounter++);
     Serial.println(WiFi.SSID());
 
-    //digitalWrite(BUILTIN_LED, dbgCounter % 2 == 0 ? LOW : HIGH);
-
-    // print your WiFi shield's IP address:
     IPAddress ip = WiFi.localIP();
     Serial.print("IP Address: ");
     Serial.println(ip);
@@ -83,4 +73,5 @@ void loop()
     timer.run();
 
     mqtt_loop();
+    ota_loop();
 }
