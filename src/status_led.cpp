@@ -1,6 +1,8 @@
 #include "main.h"
 #include "state.h"
-#include "button.h"
+#include "state/button.h"
+
+using namespace FactUtilEmbedded::state;
 
 extern ButtonWithTimer button;
 
@@ -71,6 +73,9 @@ void statusLed_blink_event()
             break;
 
         default:
+            // FIX: kludgey, toggle LED back again since we aren't handling an actual event after
+            // all
+            toggleLed();
             return;
     }
 

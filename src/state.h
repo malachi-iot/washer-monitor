@@ -5,8 +5,9 @@
 enum State
 {
     Idle,
-    Detecting,
-    NotifyingTimeout,
+    Detecting,// look for wiggles
+    Detected, // when wiggles are detected.  NOTE: reverts straight back to Detecting mode
+    NotifyingTimeout, // a certain amount of time has passed with no wiggles
     NotifyingManual,
     NotifiedManual
 };

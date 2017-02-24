@@ -3,13 +3,13 @@
 
 #include "main.h"
 #include "state.h"
-#include "button.h"
+#include "state/button.h"
+
+using namespace FactUtilEmbedded::state;
 
 const int BUTTON_PIN = 0;
 
 Bounce debouncer;
-
-Button::State buttonState;
 
 ButtonWithTimer button;
 
@@ -20,38 +20,6 @@ void button_setup()
     debouncer.interval(5); // in ms
 }
 
-
-void Button::loop(bool pressed)
-{
-    if(isPressed())
-    {
-        if(state == PRESSED) state = PRESSING;
-
-        if(!pressed)
-        {
-            state = RELEASED;
-        }
-    }
-    else if(pressed)
-    {
-        state = PRESSED;
-    }
-    else // if not pressed, and state was not pressing, then this is a 2nd non-pressed
-        // event and resets back to Idle
-    {
-        state = IDLE;
-    }
-}
-
-void ButtonWithTimer::loop(bool pressed)
-{
-    Button::loop(pressed);
-    if(getState() == PRESSED)
-    {
-        buttonInitialPressTimestamp = millis();
-    }
-}
-
 void statusLed(bool on);
 
 
@@ -60,7 +28,7 @@ void button_loop()
     debouncer.update();
     int value = debouncer.read();
 
-    button.loop(value == LOW);
+    button.update(value == LOW);
     switch(button.getState())
     {
         case Button::PRESSED:
@@ -75,7 +43,7 @@ void button_loop()
 
         case Button::PRESSING:
         {
-            if(state != State::NotifyingManual && button.elapsedSinceInitialPress() > 5000)
+            if(state != State::NotifyingManual && button.elapsedSinceInitialPress() > 3000)
                 state_change(State::NotifyingManual);
 
             break;
@@ -96,9 +64,6 @@ void button_loop()
                 else
                     state_change(State::Idle);
             }
-            break;
-
-        case Button::IDLE:
             break;
     }
 }

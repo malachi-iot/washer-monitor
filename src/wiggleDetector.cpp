@@ -38,7 +38,6 @@ uint32_t minutesCounter = 0;
 
 int wiggleTimeoutTimer = -1;
 extern SimpleTimer timer;
-void mqtt_send_status(const char* status);
 
 #define WIGGLE_TIMEOUT 10
 
@@ -67,7 +66,7 @@ void printWiggleStatus()
         // we must get more than a "little" bit of wiggling to think that stuff is shaking
         // will need fine tuning
         // also wiggleTimeoutTimer == -1 means we are not initialized/listening for a timeout
-        if(wd > 300 && wiggleTimeoutTimer != -1)
+        if(wd > 150 && wiggleTimeoutTimer != -1)
             timer.restartTimer(wiggleTimeoutTimer);
 
         wigglesDetected = 0;
