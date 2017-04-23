@@ -9,13 +9,21 @@ using namespace FactUtilEmbedded::state;
 
 const int BUTTON_PIN = 0;
 
+// It seems like hard-wired huzzah user button already is in default-pullup
+// state, so experimental code *should* work the exact same way
+//#ifdef BUTTON_EXPERIMENTAL
+
 Bounce debouncer;
 
 ButtonWithTimer button;
 
 void button_setup()
 {
+#ifdef BUTTON_EXPERIMENTAL
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+#else
     pinMode(BUTTON_PIN, INPUT);
+#endif
     debouncer.attach(BUTTON_PIN);
     debouncer.interval(5); // in ms
 }
@@ -28,7 +36,9 @@ void button_loop()
     debouncer.update();
     int value = debouncer.read();
 
+    // LOW input means button pressed (short to ground)
     button.update(value == LOW);
+
     switch(button.getState())
     {
         case Button::PRESSED:
