@@ -17,6 +17,11 @@ volatile uint16_t wigglesDetected = 0;
 util::layer1::CircularBuffer<uint16_t, 60> wigglesPerSecond;
 util::layer1::CircularBuffer<uint32_t, 60> wigglesPerMinute;
 
+// Utilize this if we want idle state to be HIGH (utilizing "weak" internal pullup)
+// This mode means wiggle detection will go to LOW/ground when activated
+// UNTESTED
+//#define WIGGLE_IDLE_HIGH
+
 void wiggleDetector()
 {
     wigglesDetected++;
@@ -24,9 +29,15 @@ void wiggleDetector()
 
 void wiggleDetector_setup()
 {
+#ifdef WIGGLE_IDLE_HIGH
+    pinMode(SENSOR_PIN, INPUT_PULLUP);
+
+    attachInterrupt(digitalPinToInterrupt(SENSOR_PIN), wiggleDetector, FALLING);
+#else
     pinMode(SENSOR_PIN, INPUT);
 
     attachInterrupt(digitalPinToInterrupt(SENSOR_PIN), wiggleDetector, RISING);
+#endif
 }
 
 
