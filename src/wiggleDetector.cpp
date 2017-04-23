@@ -20,7 +20,7 @@ util::layer1::CircularBuffer<uint32_t, 60> wigglesPerMinute;
 // Utilize this if we want idle state to be HIGH (utilizing "weak" internal pullup)
 // This mode means wiggle detection will go to LOW/ground when activated
 // UNTESTED
-//#define WIGGLE_IDLE_HIGH
+#define WIGGLE_IDLE_HIGH
 
 void wiggleDetector()
 {
