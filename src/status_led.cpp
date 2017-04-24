@@ -6,6 +6,8 @@ using namespace FactUtilEmbedded::state;
 
 extern ButtonWithTimer button;
 
+//#define STATUS_LED_ON_HIGH
+
 //const int LED_PIN = BUILTIN_LED;
 const int LED_PIN = 2;
 
@@ -19,7 +21,12 @@ bool ledOn = false;
 
 void statusLed(bool on)
 {
+#ifdef STATUS_LED_ON_HIGH
+    digitalWrite(LED_PIN, on ? HIGH : LOW);
+#else
     digitalWrite(LED_PIN, on ? LOW : HIGH);
+#endif
+
 #ifdef DEBUG
     Serial.print("Changing led: ");
     Serial.println(on ? "ON" : "OFF");
