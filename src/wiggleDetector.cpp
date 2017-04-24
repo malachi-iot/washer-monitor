@@ -50,7 +50,8 @@ uint32_t minutesCounter = 0;
 int wiggleTimeoutTimer = -1;
 extern SimpleTimer timer;
 
-#define WIGGLE_TIMEOUT 10
+// In seconds
+#define WIGGLE_TIMEOUT 60
 
 void wiggle_stop_event()
 {

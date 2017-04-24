@@ -28,6 +28,14 @@ extern volatile int wigglesDetected;
 
 SimpleTimer timer;
 
+// Huzzah and NodeMCU have a distinct LED from the ESP8266 native LED
+// use that for debugging
+#ifndef ESP8266_WEMOS_D1MINI
+#define DEBUG_LED BUILTIN_LED
+#endif
+
+
+
 void setup()
 {
     // Open serial communications and wait for port to open:
@@ -36,7 +44,9 @@ void setup()
     // setting up Station AP
     WiFi.begin(ssid, pass);
 
-    pinMode(BUILTIN_LED, OUTPUT);
+#ifdef DEBUG_LED
+    pinMode(DEBUG_LED, OUTPUT);
+#endif
 
     // Wait for connect to AP
     Serial.print("[Connecting]");
@@ -81,7 +91,9 @@ void printWifiStatus() {
 
 void loop()
 {
-    digitalWrite(BUILTIN_LED, wigglesDetected > 0 ? LOW : HIGH); // ON / OFF
+#ifdef DEBUG_LED
+    digitalWrite(DEBUG_LED, wigglesDetected > 0 ? LOW : HIGH); // ON / OFF
+#endif
 
     timer.run();
 

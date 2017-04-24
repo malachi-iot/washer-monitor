@@ -6,22 +6,15 @@ using namespace FactUtilEmbedded::state;
 
 extern ButtonWithTimer button;
 
-//#define STATUS_LED_ON_HIGH
-
 //const int LED_PIN = BUILTIN_LED;
-const int LED_PIN = 2;
-
-void statusLed_setup()
-{
-    pinMode(LED_PIN, OUTPUT);
-}
+static const int LED_PIN = 2;
 
 int ledNotifyTimer = -1;
 bool ledOn = false;
 
 void statusLed(bool on)
 {
-#ifdef STATUS_LED_ON_HIGH
+#ifndef STATUS_LED_ACTIVE_LOW
     digitalWrite(LED_PIN, on ? HIGH : LOW);
 #else
     digitalWrite(LED_PIN, on ? LOW : HIGH);
@@ -31,6 +24,14 @@ void statusLed(bool on)
     Serial.print("Changing led: ");
     Serial.println(on ? "ON" : "OFF");
 #endif
+}
+
+
+void statusLed_setup()
+{
+    pinMode(LED_PIN, OUTPUT);
+
+    statusLed(false);
 }
 
 
@@ -75,7 +76,7 @@ void statusLed_blink_event()
 #endif
 
         case State::Detecting:
-            timeout = ledOn ? 5000 : 250;
+            timeout = ledOn ? 5000 : 100;
             break;
 
         case State::NotifyingTimeout:
