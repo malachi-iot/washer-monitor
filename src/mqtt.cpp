@@ -63,6 +63,7 @@ void connect_event()
 
         mqtt_attempting_connection = false;
         // got a connection, kick off test send event
+        mqtt_send_log("Starting up.  Compiled @ " __DATE__ ", " __TIME__);
         mqtt_send_event();
     }
 }
