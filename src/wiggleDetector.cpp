@@ -51,7 +51,7 @@ int wiggleTimeoutTimer = -1;
 extern SimpleTimer timer;
 
 // In seconds
-#define WIGGLE_TIMEOUT 60
+#define WIGGLE_TIMEOUT (60 * 5)
 
 void wiggle_stop_event()
 {
@@ -71,19 +71,25 @@ uint32_t getTotalWigglesInLast5Minutes();
 
 void printWiggleStatus()
 {
+    // represents number of wiggles detected since last we entered detected state
+    static uint32_t wd_timeout = 0;
+
     uint16_t wd = wigglesDetected;
 
+    // FIX: we should divide up things that have side effects outside of
+    // printWiggleStatus
     if(wd > 0)
     {
         // we must get more than a "little" bit of wiggling to think that stuff is shaking
         // will need fine tuning
         // also wiggleTimeoutTimer == -1 means we are not initialized/listening for a timeout
-        if(wd > 150 && wiggleTimeoutTimer != -1)
+        if(wd > 5 && wiggleTimeoutTimer != -1)
         {
             state_change(State::Detected);
             timer.restartTimer(wiggleTimeoutTimer);
         }
 
+        // Side effect
         wigglesDetected = 0;
     }
 
